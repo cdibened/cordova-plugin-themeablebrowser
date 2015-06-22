@@ -50,14 +50,14 @@
         <source-file src="src/android/ThemeableBrowserUnmarshaller.java" target-dir="src/com/initialxy/cordova/themeablebrowser" />
 
         <!--  drawable src/android/resources -->
-        <resource-file src="src/android/res/drawable/share.png" target="res/drawable/share_pressed.png" />
+        <resource-file src="src/android/res/drawable/share.png" target="res/drawable/share.png" />
+        <resource-file src="src/android/res/drawable/share_pressed.png" target="res/drawable/share_pressed.png" />
         <resource-file src="src/android/res/drawable/back.png" target="res/drawable/back.png" />
         <resource-file src="src/android/res/drawable/back_pressed.png" target="res/drawable/back_pressed.png" />
         <resource-file src="src/android/res/drawable/close.png" target="res/drawable/close.png" />
         <resource-file src="src/android/res/drawable/close_pressed.png" target="res/drawable/close_pressed.png" />
         <resource-file src="src/android/res/drawable/forward.png" target="res/drawable/forward.png" />
         <resource-file src="src/android/res/drawable/forward_pressed.png" target="res/drawable/forward_pressed.png" />
-
     </platform>
 
     <!-- ios -->
