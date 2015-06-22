@@ -48,6 +48,49 @@
         <source-file src="src/android/ThemeableBrowserDialog.java" target-dir="src/com/initialxy/cordova/themeablebrowser" />
         <source-file src="src/android/InAppChromeClient.java" target-dir="src/com/initialxy/cordova/themeablebrowser" />
         <source-file src="src/android/ThemeableBrowserUnmarshaller.java" target-dir="src/com/initialxy/cordova/themeablebrowser" />
+
+        <!--  drawable src/android/resources -->
+        <resource-file src="src/android/res/drawable/back.png" target="res/drawable/back.png" />
+        <resource-file src="src/android/res/drawable-hdpi/back.png" target="res/drawable-hdpi/back.png" />
+        <resource-file src="src/android/res/drawable-ldpi/back.png" target="res/drawable-ldpi/back.png" />
+        <resource-file src="src/android/res/drawable-mdpi/back.png" target="res/drawable-mdpi/back.png" />
+        <resource-file src="src/android/res/drawable-xhdpi/back.png" target="res/drawable-xhdpi/back.png" />
+        <resource-file src="src/android/res/drawable-xxhdpi/back.png" target="res/drawable-xxhdpi/back.png" />
+        
+        <resource-file src="src/android/res/drawable/back_pressed.png" target="res/drawable/back_pressed.png" />
+        <resource-file src="src/android/res/drawable-hdpi/back_pressed.png" target="res/drawable-hdpi/back_pressed.png" />
+        <resource-file src="src/android/res/drawable-ldpi/back_pressed.png" target="res/drawable-ldpi/back_pressed.png" />
+        <resource-file src="src/android/res/drawable-mdpi/back_pressed.png" target="res/drawable-mdpi/back_pressed.png" />
+        <resource-file src="src/android/res/drawable-xhdpi/back_pressed.png" target="res/drawable-xhdpi/back_pressed.png" />
+        <resource-file src="src/android/res/drawable-xxhdpi/back_pressed.png" target="res/drawable-xxhdpi/back_pressed.png" />
+
+        <resource-file src="src/android/res/drawable/close.png" target="res/drawable/close.png" />
+        <resource-file src="src/android/res/drawable-hdpi/close.png" target="res/drawable-hdpi/close.png" />
+        <resource-file src="src/android/res/drawable-ldpi/close.png" target="res/drawable-ldpi/close.png" />
+        <resource-file src="src/android/res/drawable-mdpi/close.png" target="res/drawable-mdpi/close.png" />
+        <resource-file src="src/android/res/drawable-xhdpi/close.png" target="res/drawable-xhdpi/close.png" />
+        <resource-file src="src/android/res/drawable-xxhdpi/close.png" target="res/drawable-xxhdpi/close.png" />
+
+        <resource-file src="src/android/res/drawable/close_pressed.png" target="res/drawable/close_pressed.png" />
+        <resource-file src="src/android/res/drawable-hdpi/close_pressed.png" target="res/drawable-hdpi/close_pressed.png" />
+        <resource-file src="src/android/res/drawable-ldpi/close_pressed.png" target="res/drawable-ldpi/close_pressed.png" />
+        <resource-file src="src/android/res/drawable-mdpi/close_pressed.png" target="res/drawable-mdpi/close_pressed.png" />
+        <resource-file src="src/android/res/drawable-xhdpi/close_pressed.png" target="res/drawable-xhdpi/close_pressed.png" />
+        <resource-file src="src/android/res/drawable-xxhdpi/close_pressed.png" target="res/drawable-xxhdpi/close_pressed.png" />
+
+        <resource-file src="src/android/res/drawable/forward.png" target="res/drawable/forward.png" />
+        <resource-file src="src/android/res/drawable-hdpi/forward.png" target="res/drawable-hdpi/forward.png" />
+        <resource-file src="src/android/res/drawable-ldpi/forward.png" target="res/drawable-ldpi/forward.png" />
+        <resource-file src="src/android/res/drawable-mdpi/forward.png" target="res/drawable-mdpi/forward.png" />
+        <resource-file src="src/android/res/drawable-xhdpi/forward.png" target="res/drawable-xhdpi/forward.png" />
+        <resource-file src="src/android/res/drawable-xxhdpi/forward.png" target="res/drawable-xxhdpi/forward.png" />
+
+        <resource-file src="src/android/res/drawable/forward_pressed.png" target="res/drawable/forward_pressed.png" />
+        <resource-file src="src/android/res/drawable-hdpi/forward_pressed.png" target="res/drawable-hdpi/forward_pressed.png" />
+        <resource-file src="src/android/res/drawable-ldpi/forward_pressed.png" target="res/drawable-ldpi/forward_pressed.png" />
+        <resource-file src="src/android/res/drawable-mdpi/forward_pressed.png" target="res/drawable-mdpi/forward_pressed.png" />
+        <resource-file src="src/android/res/drawable-xhdpi/forward_pressed.png" target="res/drawable-xhdpi/forward_pressed.png" />
+        <resource-file src="src/android/res/drawable-xxhdpi/forward_pressed.png" target="res/drawable-xxhdpi/forward_pressed.png" />
     </platform>
 
     <!-- ios -->
