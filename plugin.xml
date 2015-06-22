@@ -73,14 +73,14 @@
 
         <header-file src="src/ios/CDVThemeableBrowser.h" />
         <source-file src="src/ios/CDVThemeableBrowser.m" />
-        <resource-file src="Resources/back.png"/>
-        <resource-file src="Resources/back_pressed.png"/>
-        <resource-file src="Resources/close.png"/>
-        <resource-file src="Resources/close_pressed.png"/>
-        <resource-file src="Resources/forward.png"/>
-        <resource-file src="Resources/forward_pressed.png"/>
-        <resource-file src="Resources/share.png"/>
-        <resource-file src="Resources/share_pressed.png"/>
+        <resource-file src="src/ios/Resources/back.png"/>
+        <resource-file src="src/ios/Resources/back_pressed.png"/>
+        <resource-file src="src/ios/Resources/close.png"/>
+        <resource-file src="src/ios/Resources/close_pressed.png"/>
+        <resource-file src="src/ios/Resources/forward.png"/>
+        <resource-file src="src/ios/Resources/forward_pressed.png"/>
+        <resource-file src="src/ios/Resources/share.png"/>
+        <resource-file src="src/ios/Resources/share_pressed.png"/>
         <framework src="CoreGraphics.framework" />
     </platform>
 </plugin>
