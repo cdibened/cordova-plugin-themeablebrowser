@@ -21,6 +21,16 @@
 Release Notes
 =============
 
+0.2.12
+------
+
+Bug fixes.
+
+0.2.11
+------
+
+Expanded wwwImage feature to toolbar.
+
 0.2.10
 ------
 
