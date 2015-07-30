@@ -737,7 +737,9 @@ public class ThemeableBrowser extends CordovaPlugin {
                             LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
                     titleParams.gravity = Gravity.CENTER;
                     title.setLayoutParams(titleParams);
-                    title.setSingleLine();
+                    // title.setSingleLine();
+                    title.setLines(2);
+                    title.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
                     title.setEllipsize(TextUtils.TruncateAt.END);
                     title.setGravity(Gravity.CENTER);
                     title.setTextColor(hexStringToColor(
@@ -745,6 +747,9 @@ public class ThemeableBrowser extends CordovaPlugin {
                                     ? features.title.color : "#000000ff"));
                     if (features.title.staticText != null) {
                         title.setText(features.title.staticText);
+                    }
+                    else {
+                        title.setText("Loading...");
                     }
                 }
 
