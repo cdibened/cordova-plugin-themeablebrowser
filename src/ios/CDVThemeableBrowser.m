@@ -283,11 +283,6 @@
     }
 }
 
-- (void)show:(CDVInvokedUrlCommand*)command
-{
-    [self show:command withAnimation:YES];
-}
-
 - (void)show:(CDVInvokedUrlCommand*)command withAnimation:(BOOL)animated
 {
     if (self.themeableBrowserViewController == nil) {
@@ -606,8 +601,9 @@
     BOOL toolbarIsAtBottom = ![_browserOptions.toolbarposition isEqualToString:kThemeableBrowserToolbarBarPositionTop];
     NSDictionary* toolbarProps = _browserOptions.toolbar;
     CGFloat toolbarHeight = [self getFloatFromDict:toolbarProps withKey:kThemeableBrowserPropHeight withDefault:TOOLBAR_DEF_HEIGHT];
+    CGFloat toolbar1Height = TOOLBAR_DEF_HEIGHT;
     if (!_browserOptions.fullscreen) {
-        webViewBounds.size.height -= toolbarHeight;
+        webViewBounds.size.height -= (toolbarHeight + toolbar1Height);
     }
     self.webView = [[UIWebView alloc] initWithFrame:webViewBounds];
 
@@ -643,7 +639,9 @@
     [self.spinner stopAnimating];
 
     CGFloat toolbarY = toolbarIsAtBottom ? self.view.bounds.size.height - toolbarHeight : 0.0;
+    CGFloat toolbar1Y = self.view.bounds.size.height - toolbarHeight;
     CGRect toolbarFrame = CGRectMake(0.0, toolbarY, self.view.bounds.size.width, toolbarHeight);
+    CGRect toolbar1Frame = CGRectMake(0.0, toolbar1Y, self.view.bounds.size.width, toolbar1Height);
     
     self.toolbar = [[UIView alloc] initWithFrame:toolbarFrame];
     self.toolbar.alpha = 1.000;
@@ -658,19 +656,22 @@
     self.toolbar.userInteractionEnabled = YES;
     self.toolbar.backgroundColor = [CDVThemeableBrowserViewController colorFromRGBA:[self getStringFromDict:toolbarProps withKey:kThemeableBrowserPropColor withDefault:@"#ffffffff"]];
     
-    if (toolbarProps[kThemeableBrowserPropImage] || toolbarProps[kThemeableBrowserPropWwwImage]) {
-        UIImage *image = [self getImage:toolbarProps[kThemeableBrowserPropImage]
-                               altPath:toolbarProps[kThemeableBrowserPropWwwImage]
-                               altDensity:[toolbarProps[kThemeableBrowserPropWwwImageDensity] doubleValue]];
-        
-        if (image) {
-            self.toolbar.backgroundColor = [UIColor colorWithPatternImage:image];
-        } else {
-            [self.navigationDelegate emitError:kThemeableBrowserEmitCodeLoadFail
-                                   withMessage:[NSString stringWithFormat:@"Image for toolbar, %@, failed to load.",
-                                                toolbarProps[kThemeableBrowserPropImage]
-                                                ? toolbarProps[kThemeableBrowserPropImage] : toolbarProps[kThemeableBrowserPropWwwImage]]];
-        }
+    self.toolbar1 = [[UIView alloc] initWithFrame:toolbarFrame];
+    self.toolbar1.alpha = 1.000;
+    self.toolbar1.autoresizesSubviews = YES;
+    self.toolbar1.autoresizingMask = toolbarIsAtBottom ? (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin) : UIViewAutoresizingFlexibleWidth;
+    self.toolbar1.clearsContextBeforeDrawing = NO;
+    self.toolbar1.clipsToBounds = YES;
+    self.toolbar1.contentMode = UIViewContentModeScaleToFill;
+    self.toolbar1.hidden = NO;
+    self.toolbar1.multipleTouchEnabled = NO;
+    self.toolbar1.opaque = NO;
+    self.toolbar1.userInteractionEnabled = YES;
+    self.toolbar1.backgroundColor = [CDVThemeableBrowserViewController colorFromRGBA:@"#e3e3e3"];
+    
+    if (toolbarProps[kThemeableBrowserPropImage]) {
+        UIImage *image = [UIImage imageNamed:toolbarProps[kThemeableBrowserPropImage]];
+        self.toolbar.backgroundColor = [UIColor colorWithPatternImage:image];
     }
     
     CGFloat labelInset = 5.0;
@@ -713,10 +714,14 @@
     // Arramge toolbar buttons with respect to user configuration.
     CGFloat leftWidth = 0;
     CGFloat rightWidth = 0;
+    CGFloat left1Width = 0;
+    CGFloat right1Width = 0;
     
     // Both left and right side buttons will be ordered from outside to inside.
     NSMutableArray* leftButtons = [NSMutableArray new];
     NSMutableArray* rightButtons = [NSMutableArray new];
+    NSMutableArray* left1Buttons = [NSMutableArray new];
+    NSMutableArray* right1Buttons = [NSMutableArray new];
     
     if (self.closeButton) {
         CGFloat width = [self getWidthFromButton:self.closeButton];
@@ -747,26 +752,26 @@
     // are on the same side.
     if (self.backButton && ![kThemeableBrowserAlignRight isEqualToString:_browserOptions.backButton[kThemeableBrowserPropAlign]]) {
         CGFloat width = [self getWidthFromButton:self.backButton];
-        [leftButtons addObject:self.backButton];
-        leftWidth += width;
+        [left1Buttons addObject:self.backButton];
+        left1Width += width;
     }
     
     if (self.forwardButton && [kThemeableBrowserAlignRight isEqualToString:_browserOptions.forwardButton[kThemeableBrowserPropAlign]]) {
         CGFloat width = [self getWidthFromButton:self.forwardButton];
-        [rightButtons addObject:self.forwardButton];
-        rightWidth += width;
+        [right1Buttons addObject:self.forwardButton];
+        right1Width += width;
     }
     
     if (self.forwardButton && ![kThemeableBrowserAlignRight isEqualToString:_browserOptions.forwardButton[kThemeableBrowserPropAlign]]) {
         CGFloat width = [self getWidthFromButton:self.forwardButton];
-        [leftButtons addObject:self.forwardButton];
-        leftWidth += width;
+        [left1Buttons addObject:self.forwardButton];
+        left1Width += width;
     }
     
     if (self.backButton && [kThemeableBrowserAlignRight isEqualToString:_browserOptions.backButton[kThemeableBrowserPropAlign]]) {
         CGFloat width = [self getWidthFromButton:self.backButton];
-        [rightButtons addObject:self.backButton];
-        rightWidth += width;
+        [right1Buttons addObject:self.backButton];
+        right1Width += width;
     }
     
     NSArray* customButtons = _browserOptions.customButtons;
@@ -779,11 +784,11 @@
                 button.tag = cnt;
                 CGFloat width = [self getWidthFromButton:button];
                 if ([kThemeableBrowserAlignRight isEqualToString:customButton[kThemeableBrowserPropAlign]]) {
-                    [rightButtons addObject:button];
-                    rightWidth += width;
+                    [right1Buttons addObject:button];
+                    right1Width += width;
                 } else {
-                    [leftButtons addObject:button];
-                    leftWidth += width;
+                    [left1Buttons addObject:button];
+                    left1Width += width;
                 }
             }
             
@@ -793,6 +798,8 @@
     
     self.rightButtons = rightButtons;
     self.leftButtons = leftButtons;
+    self.right1Buttons = right1Buttons;
+    self.left1Buttons = left1Buttons;
     
     for (UIButton* button in self.leftButtons) {
         [self.toolbar addSubview:button];
@@ -800,6 +807,14 @@
     
     for (UIButton* button in self.rightButtons) {
         [self.toolbar addSubview:button];
+    }
+    
+    for (UIButton* button in self.left1Buttons) {
+        [self.toolbar1 addSubview:button];
+    }
+    
+    for (UIButton* button in self.right1Buttons) {
+        [self.toolbar1 addSubview:button];
     }
     
     [self layoutButtons];
@@ -810,8 +825,9 @@
     self.titleLabel = nil;
     if (_browserOptions.title) {
         self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, 10, toolbarHeight)];
+        [self.titleLabel setFont:[UIFont systemFontOfSize:14]];
         self.titleLabel.textAlignment = NSTextAlignmentCenter;
-        self.titleLabel.numberOfLines = 1;
+        self.titleLabel.numberOfLines = 2;
         self.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
         self.titleLabel.textColor = [CDVThemeableBrowserViewController colorFromRGBA:[self getStringFromDict:_browserOptions.title withKey:kThemeableBrowserPropColor withDefault:@"#000000ff"]];
         
@@ -821,9 +837,13 @@
         
         [self.toolbar addSubview:self.titleLabel];
     }
+    if(self.titleLabel && !self.titleLabel.text) {
+        self.titleLabel.text = @"Loading...";
+    }
 
     self.view.backgroundColor = [CDVThemeableBrowserViewController colorFromRGBA:[self getStringFromDict:_browserOptions.statusbar withKey:kThemeableBrowserPropColor withDefault:@"#ffffffff"]];
     [self.view addSubview:self.toolbar];
+    [self.view addSubview:self.toolbar1];
     // [self.view addSubview:self.addressLabel];
     // [self.view addSubview:self.spinner];
 }
@@ -857,22 +877,22 @@
     return result;
 }
 
-- (UIButton*) createButton:(NSDictionary*) buttonProps action:(SEL)action withDescription:(NSString*)description
+- (UIButton*) createButton:(NSDictionary*) buttonDef action:(SEL)action withDescription:(NSString*)description
 {
     UIButton* result = nil;
-    if (buttonProps) {
+    if (buttonDef) {
         UIImage *buttonImage = nil;
-        if (buttonProps[kThemeableBrowserPropImage] || buttonProps[kThemeableBrowserPropWwwImage]) {
-            buttonImage = [self getImage:buttonProps[kThemeableBrowserPropImage]
-                                altPath:buttonProps[kThemeableBrowserPropWwwImage]
-                                altDensity:[buttonProps[kThemeableBrowserPropWwwImageDensity] doubleValue]];
+        if (buttonDef[kThemeableBrowserPropImage] || buttonDef[kThemeableBrowserPropWwwImage]) {
+            buttonImage = [self getImage:buttonDef[kThemeableBrowserPropImage]
+                                altPath:buttonDef[kThemeableBrowserPropWwwImage]
+                                altDensity:[buttonDef[kThemeableBrowserPropWwwImageDensity] doubleValue]];
 
             if (!buttonImage) {
                 [self.navigationDelegate emitError:kThemeableBrowserEmitCodeLoadFail
                                        withMessage:[NSString stringWithFormat:@"Image for %@, %@, failed to load.",
                                                     description,
-                                                    buttonProps[kThemeableBrowserPropImage]
-                                                    ? buttonProps[kThemeableBrowserPropImage] : buttonProps[kThemeableBrowserPropWwwImage]]];
+                                                    buttonDef[kThemeableBrowserPropImage]
+                                                    ? buttonDef[kThemeableBrowserPropImage] : buttonDef[kThemeableBrowserPropWwwImage]]];
             }
         } else {
             [self.navigationDelegate emitWarning:kThemeableBrowserEmitCodeUndefined
@@ -880,17 +900,17 @@
         }
 
         UIImage *buttonImagePressed = nil;
-        if (buttonProps[kThemeableBrowserPropImagePressed] || buttonProps[kThemeableBrowserPropWwwImagePressed]) {
-            buttonImagePressed = [self getImage:buttonProps[kThemeableBrowserPropImagePressed]
-                                       altPath:buttonProps[kThemeableBrowserPropWwwImagePressed]
-                                       altDensity:[buttonProps[kThemeableBrowserPropWwwImageDensity] doubleValue]];;
+        if (buttonDef[kThemeableBrowserPropImagePressed] || buttonDef[kThemeableBrowserPropWwwImagePressed]) {
+            buttonImagePressed = [self getImage:buttonDef[kThemeableBrowserPropImagePressed]
+                                       altPath:buttonDef[kThemeableBrowserPropWwwImagePressed]
+                                       altDensity:[buttonDef[kThemeableBrowserPropWwwImageDensity] doubleValue]];;
             
             if (!buttonImagePressed) {
                 [self.navigationDelegate emitError:kThemeableBrowserEmitCodeLoadFail
                                        withMessage:[NSString stringWithFormat:@"Pressed image for %@, %@, failed to load.",
                                                     description,
-                                                    buttonProps[kThemeableBrowserPropImagePressed]
-                                                    ? buttonProps[kThemeableBrowserPropImagePressed] : buttonProps[kThemeableBrowserPropWwwImagePressed]]];
+                                                    buttonDef[kThemeableBrowserPropImagePressed]
+                                                    ? buttonDef[kThemeableBrowserPropImagePressed] : buttonDef[kThemeableBrowserPropWwwImagePressed]]];
             }
         } else {
             [self.navigationDelegate emitWarning:kThemeableBrowserEmitCodeUndefined
@@ -909,10 +929,10 @@
             [result setImage:buttonImage forState:UIControlStateNormal];
             [result addTarget:self action:action forControlEvents:UIControlEventTouchUpInside];
         }
-    } else if (!buttonProps) {
+    } else if (!buttonDef) {
         [self.navigationDelegate emitWarning:kThemeableBrowserEmitCodeUndefined
                                  withMessage:[NSString stringWithFormat:@"%@ is not defined. Button will not be shown.", description]];
-    } else if (!buttonProps[kThemeableBrowserPropImage]) {
+    } else if (!buttonDef[kThemeableBrowserPropImage]) {
     }
     
     return result;
@@ -934,6 +954,7 @@
 {
     CGFloat screenWidth = CGRectGetWidth(self.view.frame);
     CGFloat toolbarHeight = self.toolbar.frame.size.height;
+    CGFloat toolbar1Height = self.toolbar1.frame.size.height;
     
     // Layout leftButtons and rightButtons from outer to inner.
     CGFloat left = 0;
@@ -948,6 +969,20 @@
         CGSize size = button.frame.size;
         button.frame = CGRectMake(screenWidth - right - size.width, floorf((toolbarHeight - size.height) / 2), size.width, size.height);
         right += size.width;
+    }
+    
+    CGFloat left1 = 0;
+    for (UIButton* button in self.left1Buttons) {
+        CGSize size = button.frame.size;
+        button.frame = CGRectMake(left1, floorf((toolbar1Height - size.height) / 2), size.width, size.height);
+        left1 += size.width;
+    }
+    
+    CGFloat right1 = 0;
+    for (UIButton* button in self.right1Buttons) {
+        CGSize size = button.frame.size;
+        button.frame = CGRectMake(screenWidth - right1 - size.width, floorf((toolbar1Height - size.height) / 2), size.width, size.height);
+        right1 += size.width;
     }
 }
 
@@ -1027,8 +1062,10 @@
 - (void)showToolBar:(BOOL)show : (NSString *) toolbarPosition
 {
     CGRect toolbarFrame = self.toolbar.frame;
+    CGRect toolbar1Frame = self.toolbar1.frame;
     CGRect locationbarFrame = self.addressLabel.frame;
     CGFloat toolbarHeight = [self getFloatFromDict:_browserOptions.toolbar withKey:kThemeableBrowserPropHeight withDefault:TOOLBAR_DEF_HEIGHT];
+    CGFloat toolbar1Height = TOOLBAR_DEF_HEIGHT;
 
     BOOL locationbarVisible = !self.addressLabel.hidden;
 
@@ -1045,7 +1082,7 @@
             // locationBar at the bottom, move locationBar up
             // put toolBar at the bottom
             if (!_browserOptions.fullscreen) {
-                webViewBounds.size.height -= toolbarHeight;
+                webViewBounds.size.height -= (toolbarHeight + toolbar1Height);
             }
             locationbarFrame.origin.y = webViewBounds.size.height;
             self.addressLabel.frame = locationbarFrame;
@@ -1057,6 +1094,7 @@
 
         if ([toolbarPosition isEqualToString:kThemeableBrowserToolbarBarPositionTop]) {
             toolbarFrame.origin.y = 0;
+            toolbar1Frame.origin.y = webViewBounds.size.height + toolbarHeight;
             if (!_browserOptions.fullscreen) {
                 webViewBounds.origin.y += toolbarFrame.size.height;
             }
@@ -1277,6 +1315,7 @@
     if ([_browserOptions.toolbarposition isEqualToString:kThemeableBrowserToolbarBarPositionTop]) {
         [self.webView setFrame:CGRectMake(self.webView.frame.origin.x, webviewOffset, self.webView.frame.size.width, self.webView.frame.size.height)];
         [self.toolbar setFrame:CGRectMake(self.toolbar.frame.origin.x, [self getStatusBarOffset], self.toolbar.frame.size.width, self.toolbar.frame.size.height)];
+        [self.toolbar1 setFrame:CGRectMake(self.toolbar1.frame.origin.x, (self.toolbar1.frame.size.height + self.webView.frame.size.height), self.toolbar1.frame.size.width, self.toolbar1.frame.size.height)];
     }
     
     CGFloat screenWidth = CGRectGetWidth(self.view.frame);
@@ -1320,15 +1359,15 @@
     return button.frame.size.width;
 }
 
-- (void)emitEventForButton:(NSDictionary*)buttonProps
+- (void)emitEventForButton:(NSDictionary*)buttonDef
 {
-    [self emitEventForButton:buttonProps withIndex:nil];
+    [self emitEventForButton:buttonDef withIndex:nil];
 }
 
-- (void)emitEventForButton:(NSDictionary*)buttonProps withIndex:(NSNumber*)index
+- (void)emitEventForButton:(NSDictionary*)buttonDef withIndex:(NSNumber*)index
 {
-    if (buttonProps) {
-        NSString* event = buttonProps[kThemeableBrowserPropEvent];
+    if (buttonDef) {
+        NSString* event = buttonDef[kThemeableBrowserPropEvent];
         if (event) {
             NSMutableDictionary* dict = [NSMutableDictionary new];
             [dict setObject:event forKey:@"type"];
@@ -1352,7 +1391,7 @@
     // loading url, start spinner
 
     self.addressLabel.text = NSLocalizedString(@"Loading...", nil);
-
+    
     [self.spinner startAnimating];
 
     return [self.navigationDelegate webViewDidStartLoad:theWebView];
@@ -1521,6 +1560,7 @@
         
         self.statusbar = nil;
         self.toolbar = nil;
+        self.toolbar1 = nil;
         self.title = nil;
         self.backButton = nil;
         self.forwardButton = nil;
